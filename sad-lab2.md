@@ -11,7 +11,7 @@ email: e.wisnios@student.uw.edu.pl
 
 # ZADANIE 1
 
-Ustaw $n$: 
+Ustaw n: 
 
 ```r
 n <- sample(100:5000, 1)
@@ -28,7 +28,7 @@ Wylosuj n obserwacji:
 x <- rnorm(n,10,1)
 ```
 
-Oblicz srednia $m$:
+Oblicz srednia m:
 
 ```r
 srednia = sum(x)/n
@@ -135,11 +135,11 @@ S2 <- ((n-1)/(n+1)) * S
 ```
 Oblicz obciazenie dla estymatorow wariancji:
 <br>
-$\mathbb{E}(\theta_n) - \theta$
+E(theta_n) - theta
 <br>
-$\mathbb{E}(\theta_n)$ = mean(S)
+E(theta_n) = mean(S)
 <br>
-$\theta$ -- sd^2 (chcielismy miec taka wariancje)
+theta -- sd^2 (chcielismy miec taka wariancje)
 
 ```r
 b_S=mean(S)-std^2
