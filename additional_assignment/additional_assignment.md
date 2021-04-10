@@ -19,7 +19,7 @@ Otrzymują Państwo zbiór danych opisujących laptopy dostępne w sprzedaży pe
 *  `price_euros` - cena laptopa w euro
 *  `company` - producent laptopa (1 - Acer, 2 - Asus, 3 - Dell, 4 - HP, 5 - Lenovo, 6 - MSI, 7 - Toshiba)
 * `typename` - typ laptopa (1 - 2w1, 2 - gaming, 3 - netbook, 4 - notebook, 5 - ultrabook, 6 - stacja robocza)
-* `ram` - ilość RAM laptopa (1 - $GB, 2 - 8GB, 3 - 16GB, 4 - 32GB)
+* `ram` - ilość RAM laptopa (1 - 2GB, 2 - 8GB, 3 - 16GB, 4 - 32GB)
 
 Państwa zadaniem jest w oparciu o podany zbiór weryfikacja następujących hipotez:
 
@@ -56,15 +56,19 @@ corrplot(M, method = 'color')
 ```
 
 ![](additional_assignment_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 <br>
-Możemy zauważyc, że kolumna 'ram' ma niska korelacje z kolumna 'company', zatem na podstawie samego wykresu możemy sądzić, że stosowana ilość RAM nie jest zależna od jego producenta. Żeby zweryfikować hipotezę przeprowadzimy test niezależności \(\chi^2\). Wybieramy ten test, ponieważ mamy do czynienia z całą populacją.
+Możemy zauważyć, że kolumna 'ram' ma niską korelację z kolumną 'company', zatem na podstawie samego wykresu możemy sądzić, że stosowana ilość RAM nie jest zależna od jego producenta. Żeby zweryfikować hipotezę przeprowadzimy test niezależności \(\chi^2\). Wybieramy ten test, ponieważ mamy do czynienia z całą populacją.
 <br>
 Przyjmijmy:
 <br>
+
 \(H_0:\) Stosowana ilość RAM w laptopie jest niezależna od jego producenta
 <br>
+
 \(H_1:\) Stosowana ilosć RAM w laptopie NIE jest niezależna od jego producenta
 <br>
+
 oraz przyjmujemy poziom istotności \(\alpha = 0.05\).
 
 ```r
@@ -207,6 +211,7 @@ corrplot(contrib, is.cor = FALSE)
 ```
 
 ![](additional_assignment_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
 <br>
 Na podstawie powyższego wykresu możemy stwierdzić, że:
 
@@ -253,14 +258,18 @@ table(data_2pom$ram, data_2pom$company)
 ##   4GB   90     89
 ##   8GB  142    141
 ```
-Przeprowadzimy zgodności \(\chi^2\). 
+Przeprowadzimy zgodności \(\chi^2\). Nie możemy przeprowadzić t-testu, ponieważ próba nie jest rozkładu normalnego (widać na wykresach niżej).
 <br>
+
 Przyjmijmy:
 <br>
+
 \(H_0:\) Rozkłady stosowanych pamięci RAM w markach laptopów HP i Lenovo NIE są zgodne.
 <br>
+
 \(H_1:\) Rozkłady stosowanych pamięci RAM w markach laptopów HP i Lenovo są zgodne.
 <br>
+
 oraz przyjmujemy poziom istotności \(\alpha = 0.05\).
 
 
@@ -318,12 +327,16 @@ ggqqplot(data_2_lenovo$ram)
 
 Aby zweryfikować ostatnią hipotezę użyjemy t-testu. Niech:
 <br>
+
 \(H_0:\) średnie zlogarytmowane ceny notebooka Dell i HP nie mają statystycznie dużych różnic
 <br>
+
 \(H_1:\) średnie zlogarytmowane ceny notebooka Dell i HP mają statystycznie dużą różnicę
 <br>
+
 oraz przyjmujemy poziom istotności \(\alpha = 0.05\).
 <br>
+
 Na początku obliczmy logarytmy cen notebooków.
 
 ```r
