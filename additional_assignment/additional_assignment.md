@@ -1,10 +1,11 @@
 ---
 title: "Statistical Data Analysis 2020/2021"
 author: "Emilia Wisnios"
-subtitle: "Additional assignment 1"
-output:  
+subtitle: Additional assignment 1
+output:
   html_document:
-    keep_md: true
+    keep_md: yes
+  pdf_document: default
 email: e.wisnios@student.uw.edu.pl
 ---
 
@@ -55,7 +56,8 @@ corrplot(M, method = 'color')
 ```
 
 ![](additional_assignment_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
-Możemy zauważyc, że kolumna 'ram' ma niska korelacje z kolumna 'company', zatem na podstawie samego wykresu możemy sądzić, że stosowana ilość RAM nie jest zależna od jego producenta. Żeby zweryfikować hipotezę przeprowadzimy test chi-kwadrat.
+<br>
+Możemy zauważyc, że kolumna 'ram' ma niska korelacje z kolumna 'company', zatem na podstawie samego wykresu możemy sądzić, że stosowana ilość RAM nie jest zależna od jego producenta. Żeby zweryfikować hipotezę przeprowadzimy test niezależności \(\chi^2\). Wybieramy ten test, ponieważ mamy do czynienia z całą populacją.
 <br>
 Przyjmijmy:
 <br>
@@ -71,7 +73,7 @@ slownik_ram <- c('1' = '4GB', '2' = '8GB',
 data$ram <- slownik_ram[as.character(data$ram)]
 ```
 
-Poniżej znajduje się podsumowanie ilości laptopów z danym RAMem w zależoności od producenta:
+Poniżej znajduje się podsumowanie liczby laptopów z danym RAMem w zależoności od producenta:
 
 ```r
 data1 <- data
@@ -112,6 +114,14 @@ Przeprowadzimy test \(\chi^2\)
 
 ```r
 chisq <- chisq.test(table(data$ram, data$company))
+```
+
+```
+## Warning in chisq.test(table(data$ram, data$company)): Chi-squared approximation
+## may be incorrect
+```
+
+```r
 chisq
 ```
 
@@ -122,6 +132,21 @@ chisq
 ## data:  table(data$ram, data$company)
 ## X-squared = 164.23, df = 18, p-value < 2.2e-16
 ```
+Zauważmy, że otrzymaliśmy warning mówiący, że przeprowadzony test może nie być poprawny. Wynika to małych wartości, które są w naszej próbie. Aby sprawdzić czy powód jest prawdziwy pomnożymy wartości tabeli przez 1000.
+
+```r
+chisq2 <- chisq.test(table(data$ram, data$company)*1000)
+chisq2
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  table(data$ram, data$company) * 1000
+## X-squared = 164234, df = 18, p-value < 2.2e-16
+```
+Zatem istotnie powodem warningu są małe wartości próby.
 
 ```r
 chisq$observed
@@ -181,7 +206,7 @@ round(contrib, 3)
 corrplot(contrib, is.cor = FALSE)
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 <br>
 Na podstawie powyższego wykresu możemy stwierdzić, że:
 
@@ -203,6 +228,7 @@ Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od war
 # Rozkład stosowanych pamięci RAM w notebookach HP i Lenovo jest taki sam
 
 Skorzystamy z fragmentu poprzedniego podpunktu. 
+
 
 ```r
 data_true <- read.table('laptops.csv', header = TRUE, sep = ';')
@@ -227,26 +253,38 @@ table(data_2pom$ram, data_2pom$company)
 ##   4GB   90     89
 ##   8GB  142    141
 ```
-Przeprowadzimy z-test, aby porównać rozkłady pamięci RAM.
+Przeprowadzimy zgodności \(\chi^2\). 
+<br>
+Przyjmijmy:
+<br>
+\(H_0:\) Rozkłady stosowanych pamięci RAM w markach laptopów HP i Lenovo NIE są zgodne.
+<br>
+\(H_1:\) Rozkłady stosowanych pamięci RAM w markach laptopów HP i Lenovo są zgodne.
+<br>
+oraz przyjmujemy poziom istotności \(\alpha = 0.05\).
+
 
 ```r
-z.test(table(data_2$ram, data_2$company), sigma.x = 1)
+chisq.test(table(data_2$ram, data_2$company))
+```
+
+```
+## Warning in chisq.test(table(data_2$ram, data_2$company)): Chi-squared
+## approximation may be incorrect
 ```
 
 ```
 ## 
-## 	One-sample z-Test
+## 	Pearson's Chi-squared test
 ## 
 ## data:  table(data_2$ram, data_2$company)
-## z = 182.79, p-value < 2.2e-16
-## alternative hypothesis: true mean is not equal to 0
-## 95 percent confidence interval:
-##  63.93205 65.31795
-## sample estimates:
-## mean of x 
-##    64.625
+## X-squared = 14.639, df = 3, p-value = 0.002153
 ```
-Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej. 
+Podobnie jak w popdunkcie a) otrzymaliśmy ostrzeżenie, związane z małymi warościami w próbie. 
+<br>
+Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej, czyli rozkład stosowanych pamięci RAM w notebookach HP i Lenovo jest zgodny.
+<br>
+Narysujmy oba rozkłady, aby potwierdzić nasz wynik:
 
 
 ```r
@@ -254,36 +292,35 @@ data_2_hp <- data_2[data_2$company == 4, ]
 ggdensity(data_2_hp$ram, fill = "lightgray")
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 ```r
 ggqqplot(data_2_hp$ram)
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-12-2.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-14-2.png)<!-- -->
 
 ```r
 data_2_lenovo <- data_2[data_2$company == 5, ]
 ggdensity(data_2_lenovo$ram, fill = "lightgray")
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 ```r
 ggqqplot(data_2_lenovo$ram)
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-13-2.png)<!-- -->
-
+![](additional_assignment_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
 
 # Średnia zlogarytmowana cena notebooka Dell i HP jest równa
 
 
 Aby zweryfikować ostatnią hipotezę użyjemy t-testu. Niech:
 <br>
-\(H_0:\) średnie zlogarytmowane ceny notebooka Dell i HP są równe
+\(H_0:\) średnie zlogarytmowane ceny notebooka Dell i HP nie mają statystycznie dużych różnic
 <br>
-\(H_1:\) średnie zlogarytmowane ceny notebooka Dell i HP NIE są równe
+\(H_1:\) średnie zlogarytmowane ceny notebooka Dell i HP mają statystycznie dużą różnicę
 <br>
 oraz przyjmujemy poziom istotności \(\alpha = 0.05\).
 <br>
@@ -291,13 +328,39 @@ Na początku obliczmy logarytmy cen notebooków.
 
 ```r
 data$price_euros <- sapply(data$price_euros, log)
+data_dell <- data[data$company == 3, ]
+data_hp <- data[data$company == 4, ]
 ```
 
+Następnie obliczmy t-test. Wybieramy akurat ten test, ponieważ chcemy porównać ze sobą dwie grupy (a nie populację jak w przypadku a)). W tym celu powinniśmy sprawdzić czy rozkład wyników zmiennej zależnej w każdej z grup jest zbliżony do rozkładu normalnego. 
+
+```r
+ggdensity(data_dell$price_euros, fill = "lightgray")
+```
+
+![](additional_assignment_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+
+```r
+ggqqplot(data_dell$price_euros)
+```
+
+![](additional_assignment_files/figure-html/unnamed-chunk-17-2.png)<!-- -->
+
+```r
+ggdensity(data_hp$price_euros, fill = "lightgray")
+```
+
+![](additional_assignment_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+
+```r
+ggqqplot(data_hp$price_euros)
+```
+
+![](additional_assignment_files/figure-html/unnamed-chunk-18-2.png)<!-- -->
+Rozkłady są zbliżone do rozkładu normalnego, możemy więc przeprowadzić t-test:
 
 
 ```r
-data_dell <- data[data$company == 3, ]
-data_hp <- data[data$company == 4, ]
 t_test_ceny <- t.test(data_dell$price_euros, data_hp$price_euros)
 t_test_ceny
 ```
@@ -315,12 +378,12 @@ t_test_ceny
 ## mean of x mean of y 
 ##  6.958167  6.854553
 ```
-Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej. Czyli średnia zlogarytmowana cena notebooka Dell i HP nie są sobie równe. Możemy to sprawdzić obliczając odpowiednie średnie:
+
+Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej. Czyli w średniej zlogarytmowanej cenie notebooka Dell i HP są statystycznie ważne różnice. Możemy to potwierdzić obliczając odpowiednie średnie:
 
 
 ```r
 mean_dell <- mean(data_dell$price_euros)
-mean_hp <- mean(data_hp$price_euros)
 mean_dell
 ```
 
@@ -329,9 +392,47 @@ mean_dell
 ```
 
 ```r
+mean_hp <- mean(data_hp$price_euros)
 mean_hp
 ```
 
 ```
 ## [1] 6.854553
+```
+Ponadto sprawdżmy odpowiednie mediany i odchylenia standardowe
+
+```r
+mediana_dell <- median(data_dell$price_euros)
+mediana_dell
+```
+
+```
+## [1] 6.906755
+```
+
+```r
+mediana_hp <- median(data_hp$price_euros)
+mediana_hp
+```
+
+```
+## [1] 6.91821
+```
+
+```r
+sd_dell <- sd(data_dell$price_euros)
+sd_dell
+```
+
+```
+## [1] 0.5240001
+```
+
+```r
+sd_hp <- sd(data_hp$price_euros)
+sd_hp
+```
+
+```
+## [1] 0.56112
 ```
