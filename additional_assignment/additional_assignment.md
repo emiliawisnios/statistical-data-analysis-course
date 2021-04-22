@@ -51,14 +51,14 @@ head(data)
 Sporzadzimy correlogram:
 
 ```r
-M <- cor(data)
+M <- cor(data, method='spearman')
 corrplot(M, method = 'color')
 ```
 
 ![](additional_assignment_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 <br>
-Możemy zauważyć, że kolumna 'ram' ma niską korelację z kolumną 'company', zatem na podstawie samego wykresu możemy sądzić, że stosowana ilość RAM nie jest zależna od jego producenta. Żeby zweryfikować hipotezę przeprowadzimy test niezależności \(\chi^2\). Wybieramy ten test, ponieważ mamy do czynienia z całą populacją.
+Możemy zauważyć, że kolumna 'ram' ma niską korelację z kolumną 'company', zatem na podstawie samego wykresu możemy sądzić, że stosowana ilość RAM nie jest zależna od jego producenta. Żeby zweryfikować hipotezę przeprowadzimy test niezależności \(\chi^2\). Wybieramy ten test, ponieważ mamy do czynienia ze zmiennymi kategorycznymi.
 <br>
 Przyjmijmy:
 <br>
@@ -97,21 +97,7 @@ table(data1$ram, data1$company)
 ##   4GB    57   45   63  90     89   0      14
 ##   8GB    33   61  161 142    141  22      25
 ```
-Narysujmy wykres kwantyl-kwantyl, aby ocenić, czy zmienna ma rozkład normalny
 
-```r
-ggdensity(data$company, fill = "lightgray")
-```
-
-![](additional_assignment_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
-
-```r
-ggqqplot(data$company)
-```
-
-![](additional_assignment_files/figure-html/unnamed-chunk-6-2.png)<!-- -->
-<br>
-Zatem widzimy, że kolumna company nie ma rozkładu normalnego.
 <br>
 Przeprowadzimy test \(\chi^2\) 
 
@@ -210,7 +196,7 @@ round(contrib, 3)
 corrplot(contrib, is.cor = FALSE)
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 <br>
 Na podstawie powyższego wykresu możemy stwierdzić, że:
@@ -293,7 +279,7 @@ Podobnie jak w popdunkcie a) otrzymaliśmy ostrzeżenie, związane z małymi war
 <br>
 Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej, czyli rozkład stosowanych pamięci RAM w notebookach HP i Lenovo jest zgodny.
 <br>
-Narysujmy oba rozkłady, aby potwierdzić nasz wynik:
+Narysujmy oba rozkłady, aby zweryfikować nasz wynik:
 
 
 ```r
@@ -301,26 +287,14 @@ data_2_hp <- data_2[data_2$company == 4, ]
 ggdensity(data_2_hp$ram, fill = "lightgray")
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
-
-```r
-ggqqplot(data_2_hp$ram)
-```
-
-![](additional_assignment_files/figure-html/unnamed-chunk-14-2.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 ```r
 data_2_lenovo <- data_2[data_2$company == 5, ]
 ggdensity(data_2_lenovo$ram, fill = "lightgray")
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
-
-```r
-ggqqplot(data_2_lenovo$ram)
-```
-
-![](additional_assignment_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 # Średnia zlogarytmowana cena notebooka Dell i HP jest równa
 
@@ -351,25 +325,25 @@ Następnie obliczmy t-test. Wybieramy akurat ten test, ponieważ chcemy porówna
 ggdensity(data_dell$price_euros, fill = "lightgray")
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
 ```r
 ggqqplot(data_dell$price_euros)
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-17-2.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-16-2.png)<!-- -->
 
 ```r
 ggdensity(data_hp$price_euros, fill = "lightgray")
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
 
 ```r
 ggqqplot(data_hp$price_euros)
 ```
 
-![](additional_assignment_files/figure-html/unnamed-chunk-18-2.png)<!-- -->
+![](additional_assignment_files/figure-html/unnamed-chunk-17-2.png)<!-- -->
 Rozkłady są zbliżone do rozkładu normalnego, możemy więc przeprowadzić t-test:
 
 
@@ -392,7 +366,7 @@ t_test_ceny
 ##  6.958167  6.854553
 ```
 
-Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej. Czyli w średniej zlogarytmowanej cenie notebooka Dell i HP są statystycznie ważne różnice. Możemy to potwierdzić obliczając odpowiednie średnie:
+Na poziomie istotności \(\alpha = 0.05\) otrzymana p-value jest mniejsza od wartości \(\alpha\), zatem mamy podstawę do odrzucenia hipotezy zerowej. Czyli w średniej zlogarytmowanej cenie notebooka Dell i HP są statystycznie ważne różnice. Podobny wniosek wysnuwamy na podstawie obliczonych średnich:
 
 
 ```r
